@@ -28,8 +28,8 @@ try {
 
 const app = express();
 const PORT = Number(process.env.PORT || 3000);
-const COLS = ['1','2','3','4','5','6','7','8','9','0'];
-const OPEN_NUMBERS = ['1','2','3','4','5','6','7','8','9','0'];
+const COLS = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'];
+const OPEN_NUMBERS = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'];
 
 // Read static assets into memory so they are bundled by @vercel/nft and served instantly
 let adminLoginHtml = '';
@@ -122,7 +122,7 @@ if (hasApplicationCredentials && firebaseAdminApp && firebaseAdminFirestore) {
 
     firebaseApp = getApps()[0] || initializeApp({
       credential: adminCredential,
-      projectId: process.env.FIREBASE_PROJECT_ID || serviceAccount?.project_id || 'attendenceapp-209e9'
+      projectId: process.env.FIREBASE_PROJECT_ID || serviceAccount?.project_id || 'nana-63a51'
     });
     db = getFirestore(firebaseApp);
     if (getAuth) firebaseAuth = getAuth(firebaseApp);
@@ -177,7 +177,7 @@ const VALID_NUMBERS = new Set([
   ...MASTER_DATA.dp_table.flat(),
   ...Object.values(MASTER_DATA.families).flat()
 ]);
-const VALID_OPEN = new Set(['1','2','3','4','5','6','7','8','9','0']);
+const VALID_OPEN = new Set(['1', '2', '3', '4', '5', '6', '7', '8', '9', '0']);
 
 function getHistoryTargets(history) {
   if (Array.isArray(history.targets)) return history.targets.map(String);
@@ -274,13 +274,13 @@ const apiRouter = express.Router();
 
 apiRouter.get('/firebase-config', (req, res) => {
   const config = {
-    apiKey: process.env.FIREBASE_API_KEY || 'AIzaSyA3rJ4aQemAe_ITR_dftDdmPf11A6jLgTE',
-    authDomain: process.env.FIREBASE_AUTH_DOMAIN || 'attendenceapp-209e9.firebaseapp.com',
-    projectId: process.env.FIREBASE_PROJECT_ID || 'attendenceapp-209e9',
-    storageBucket: process.env.FIREBASE_STORAGE_BUCKET || 'attendenceapp-209e9.firebasestorage.app',
-    messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID || '107409632890',
-    appId: process.env.FIREBASE_APP_ID || '1:107409632890:web:5c2e5a83a3bf791e1a15c3',
-    measurementId: process.env.FIREBASE_MEASUREMENT_ID || 'G-Y4ZX678GBF'
+    apiKey: process.env.FIREBASE_API_KEY || 'AIzaSyAECE5dk93DDH8pZ87T4HlBCa2lcMHW65o',
+    authDomain: process.env.FIREBASE_AUTH_DOMAIN || 'nana-63a51.firebaseapp.com',
+    projectId: process.env.FIREBASE_PROJECT_ID || 'nana-63a51',
+    storageBucket: process.env.FIREBASE_STORAGE_BUCKET || 'nana-63a51.firebasestorage.app',
+    messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID || '540917382165',
+    appId: process.env.FIREBASE_APP_ID || '1:540917382165:web:519c88d202f10ae277621c',
+    measurementId: process.env.FIREBASE_MEASUREMENT_ID || 'G-4SFDKW7N6C'
   };
   res.json(config);
 });
@@ -336,7 +336,7 @@ apiRouter.post('/transactions/apply', auth, async (req, res) => {
       const number = String(target);
       targetCounts.set(number, (targetCounts.get(number) || 0) + 1);
     }
-    
+
     if (!hasApplicationCredentials || !db) {
       const amountsObj = mode === 'OPEN' ? mockOpenAmounts : mockNumberAmounts;
       for (const [number, count] of targetCounts.entries()) {
@@ -386,16 +386,16 @@ apiRouter.post('/transactions/apply', auth, async (req, res) => {
 
 apiRouter.delete('/history/:id', auth, async (req, res) => {
   const historyId = String(req.params.id);
-  
+
   if (!hasApplicationCredentials || !db) {
     const historyIndex = mockHistoryLog.findIndex(h => h.id === historyId);
     if (historyIndex === -1) return res.status(404).json({ error: 'Transaction not found.' });
-    
+
     const history = mockHistoryLog[historyIndex];
     if (history.username !== req.user.username && req.user.role !== 'admin') {
       return res.status(403).json({ error: 'You can delete only your own transactions.' });
     }
-    
+
     mockHistoryLog.splice(historyIndex, 1);
     mockVersion++;
     saveLocalState();
