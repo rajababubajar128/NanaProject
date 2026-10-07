@@ -1,0 +1,109 @@
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js';
+import { getAnalytics, isSupported as isAnalyticsSupported } from 'https://www.gstatic.com/firebasejs/12.9.0/firebase-analytics.js';
+import {
+  browserSessionPersistence,
+  getAuth,
+  createUserWithEmailAndPassword,
+  onIdTokenChanged,
+  sendPasswordResetEmail,
+  setPersistence,
+  signInWithEmailAndPassword,
+  signOut,
+  updateProfile
+} from 'https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js';
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  serverTimestamp
+} from 'https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js';
+
+let firebaseConfig = {
+  apiKey: "AIzaSyAECE5dk93DDH8pZ87T4HlBCa2lcMHW65o",
+  authDomain: "nana-63a51.firebaseapp.com",
+  projectId: "nana-63a51",
+  storageBucket: "nana-63a51.firebasestorage.app",
+  messagingSenderId: "540917382165",
+  appId: "1:540917382165:web:519c88d202f10ae277621c",
+  measurementId: "G-4SFDKW7N6C"
+};
+
+try {
+  const configResponse = await fetch('/api/firebase-config');
+  if (configResponse.ok) {
+    const remoteConfig = await configResponse.json();
+    if (remoteConfig && remoteConfig.apiKey) {
+      firebaseConfig = { ...firebaseConfig, ...remoteConfig };
+    }
+  }
+} catch (e) {
+  console.warn('Could not fetch remote Firebase config, using default config:', e);
+}
+
+const firebaseApp = initializeApp(firebaseConfig);
+
+try {
+  if (await isAnalyticsSupported()) {
+    getAnalytics(firebaseApp);
+  }
+} catch (e) {
+  // Analytics optional
+}
+
+const auth = getAuth(firebaseApp);
+try {
+  await setPersistence(auth, browserSessionPersistence);
+} catch (e) {
+  console.warn('Failed to set persistence:', e);
+}
+
+// Client-side Firestore instance
+let clientFirestore = null;
+try {
+  clientFirestore = getFirestore(firebaseApp);
+} catch (e) {
+  console.warn('Client Firestore could not be initialized:', e.message);
+}
+
+// Helper to save transaction directly into Firestore
+window.firebaseSaveTransaction = async (data) => {
+  if (!clientFirestore) return null;
+  try {
+    const docRef = await addDoc(collection(clientFirestore, 'history'), {
+      ...data,
+      created_at: serverTimestamp(),
+      user_email: auth.currentUser?.email || 'admin'
+    });
+    return docRef.id;
+  } catch (err) {
+    console.warn('Firestore transaction save warning:', err.message);
+    return null;
+  }
+};
+
+const usernameEmail = username => `${username.trim().toLowerCase()}@users.${firebaseConfig.projectId}.firebaseapp.com`;
+
+window.firebaseSignIn = async (identifier, password) => {
+  const email = identifier.includes('@') ? identifier.trim() : usernameEmail(identifier);
+  const result = await signInWithEmailAndPassword(auth, email, password);
+  return result.user;
+};
+window.firebaseSignUp = async (email, password) => {
+  const result = await createUserWithEmailAndPassword(auth, email, password);
+  return result.user;
+};
+window.firebaseSignUpUsername = async (username, password) => {
+  const normalizedUsername = username.trim().toLowerCase();
+  if (!/^[a-z0-9][a-z0-9._-]{2,29}$/.test(normalizedUsername) || normalizedUsername.includes('..') || normalizedUsername.endsWith('.')) {
+    throw new Error('Use 3-30 letters, numbers, dots, underscores or hyphens for the username.');
+  }
+  const result = await createUserWithEmailAndPassword(auth, usernameEmail(normalizedUsername), password);
+  await updateProfile(result.user, { displayName: normalizedUsername });
+  return result.user;
+};
+window.firebaseSignOut = () => signOut(auth);
+window.firebaseSendPasswordResetEmail = identifier => {
+  if (!identifier.includes('@')) throw new Error('Enter the email address registered with Firebase to reset its password.');
+  return sendPasswordResetEmail(auth, identifier.trim());
+};
+window.firebaseOnAuthStateChanged = callback => onIdTokenChanged(auth, callback);
