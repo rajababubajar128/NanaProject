@@ -274,13 +274,13 @@ const apiRouter = express.Router();
 
 apiRouter.get('/firebase-config', (req, res) => {
   const config = {
-    apiKey: process.env.FIREBASE_API_KEY || 'AIzaSyAECE5dk93DDH8pZ87T4HlBCa2lcMHW65o',
-    authDomain: process.env.FIREBASE_AUTH_DOMAIN || 'nana-63a51.firebaseapp.com',
-    projectId: process.env.FIREBASE_PROJECT_ID || 'nana-63a51',
-    storageBucket: process.env.FIREBASE_STORAGE_BUCKET || 'nana-63a51.firebasestorage.app',
-    messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID || '540917382165',
-    appId: process.env.FIREBASE_APP_ID || '1:540917382165:web:519c88d202f10ae277621c',
-    measurementId: process.env.FIREBASE_MEASUREMENT_ID || 'G-4SFDKW7N6C'
+    apiKey: process.env.FIREBASE_API_KEY || 'AIzaSyDYmDguhBZSu1xYQTO-NRZd37JYM6eQVX4',
+    authDomain: process.env.FIREBASE_AUTH_DOMAIN || 'newone-9415f.firebaseapp.com',
+    projectId: process.env.FIREBASE_PROJECT_ID || 'newone-9415f',
+    storageBucket: process.env.FIREBASE_STORAGE_BUCKET || 'newone-9415f.firebasestorage.app',
+    messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID || '387094196269',
+    appId: process.env.FIREBASE_APP_ID || '1:387094196269:web:de61357579fb06b3c348a4',
+    measurementId: process.env.FIREBASE_MEASUREMENT_ID || 'G-4BNYS6D4NC'
   };
   res.json(config);
 });
