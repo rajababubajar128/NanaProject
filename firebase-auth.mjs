@@ -19,13 +19,13 @@ import {
 } from 'https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js';
 
 let firebaseConfig = {
-  apiKey: "AIzaSyAECE5dk93DDH8pZ87T4HlBCa2lcMHW65o",
-  authDomain: "nana-63a51.firebaseapp.com",
-  projectId: "nana-63a51",
-  storageBucket: "nana-63a51.firebasestorage.app",
-  messagingSenderId: "540917382165",
-  appId: "1:540917382165:web:519c88d202f10ae277621c",
-  measurementId: "G-4SFDKW7N6C"
+  apiKey: "AIzaSyDYmDguhBZSu1xYQTO-NRZd37JYM6eQVX4",
+  authDomain: "newone-9415f.firebaseapp.com",
+  projectId: "newone-9415f",
+  storageBucket: "newone-9415f.firebasestorage.app",
+  messagingSenderId: "387094196269",
+  appId: "1:387094196269:web:de61357579fb06b3c348a4",
+  measurementId: "G-4BNYS6D4NC"
 };
 
 try {
